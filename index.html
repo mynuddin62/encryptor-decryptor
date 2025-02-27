@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Encryptor/Decryptor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #output {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h2>Password Encryptor/Decryptor</h2>
+    <input type="text" id="password" placeholder="Enter password">
+    <button onclick="encryptPassword()">Encrypt</button>
+    <button onclick="decryptPassword()">Decrypt</button>
+    <p id="output"></p>
+    
+    <script>
+        const secretKey = 'abcdefghij1234567890'; // Fixed key for reversible encryption
+        
+        function encrypt(text) {
+            let encrypted = '';
+            for (let i = 0; i < text.length; i++) {
+                encrypted += String.fromCharCode(text.charCodeAt(i) ^ secretKey.charCodeAt(i % secretKey.length));
+            }
+            return btoa(encrypted).slice(0, 20); // Convert to base64 and limit length
+        }
+        
+        function decrypt(encryptedText) {
+            try {
+                let decoded = atob(encryptedText);
+                let decrypted = '';
+                for (let i = 0; i < decoded.length; i++) {
+                    decrypted += String.fromCharCode(decoded.charCodeAt(i) ^ secretKey.charCodeAt(i % secretKey.length));
+                }
+                return decrypted;
+            } catch (e) {
+                return 'Invalid encrypted text';
+            }
+        }
+
+        function encryptPassword() {
+            let password = document.getElementById('password').value;
+            if (!password) {
+                document.getElementById('output').innerText = 'Please enter a password';
+                return;
+            }
+            let encryptedPassword = encrypt(password);
+            document.getElementById('output').innerText = 'Encrypted: ' + encryptedPassword;
+        }
+
+        function decryptPassword() {
+            let encryptedPassword = document.getElementById('password').value;
+            if (!encryptedPassword) {
+                document.getElementById('output').innerText = 'Please enter an encrypted text';
+                return;
+            }
+            let decryptedPassword = decrypt(encryptedPassword);
+            document.getElementById('output').innerText = 'Decrypted: ' + decryptedPassword;
+        }
+    </script>
+</body>
+</html>
